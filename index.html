@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Expense Tracker (Dark Edition)</title>
+  <!-- Google Fonts & Font Awesome Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body class="dark-mode">
+
+  <!-- ==================== TOAST ALERTS ==================== -->
+  <div id="toast-top-right-container" class="toast-container top-right"></div>
+  <div id="toast-center-container" class="toast-container center-screen"></div>
+
+  <!-- ==================== VIEW 1: HOME PAGE ==================== -->
+  <main id="home-page" class="page-view active">
+    <header class="app-header">
+      <div class="header-left">
+        <h1><i class="fa-solid fa-wallet brand-icon"></i> Expense Tracker</h1>
+        <p class="subtitle">Personal budget & spendings analytics</p>
+      </div>
+      <div class="header-right">
+        <button id="nav-to-category-btn" class="btn btn-secondary">
+          <i class="fa-solid fa-layer-group"></i> View by Category
+        </button>
+      </div>
+    </header>
+
+    <!-- Enhanced Total Spendings Metric Card -->
+    <section class="total-spendings-card">
+      <div class="spendings-glow"></div>
+      <div class="total-spendings-info">
+        <span class="card-label"><i class="fa-solid fa-chart-line"></i> Total Spendings</span>
+        <h2 id="total-spendings-amount">₹0.00</h2>
+      </div>
+      <div class="total-spendings-icon">
+        <i class="fa-solid fa-indian-rupee-sign"></i>
+      </div>
+    </section>
+
+    <!-- Expense Entry Form Card -->
+    <section class="form-section card">
+      <div class="card-header">
+        <h3><i class="fa-solid fa-square-plus text-primary"></i> Add New Expense</h3>
+      </div>
+      <form id="add-expense-form" novalidate>
+        <div class="form-grid">
+          <!-- 1. Title Input -->
+          <div class="form-group">
+            <label for="expense-title">Title</label>
+            <input type="text" id="expense-title" placeholder="e.g., Grocery Mart" />
+          </div>
+
+          <!-- 2. Amount Input (No Spinners) -->
+          <div class="form-group">
+            <label for="expense-amount">Amount (₹)</label>
+            <input type="number" id="expense-amount" class="no-spinner" placeholder="Enter Amount" step="0.01" min="0" />
+          </div>
+
+          <!-- 3. Category Select -->
+          <div class="form-group">
+            <label for="expense-category">Category</label>
+            <select id="expense-category">
+              <option value="" disabled selected>Select Category</option>
+              <option value="Food & Dining">Food & Dining</option>
+              <option value="Transportation">Transportation</option>
+              <option value="Entertainment">Entertainment</option>
+              <option value="Utilities">Utilities</option>
+              <option value="Others">Others</option>
+            </select>
+          </div>
+
+          <!-- 4. Expense Date Button Trigger -->
+          <div class="form-group">
+            <label>Expense Date</label>
+            <div class="date-button-wrapper">
+              <button type="button" id="expense-date-btn" class="btn btn-date">
+                <i class="fa-regular fa-calendar"></i>
+                <span id="expense-date-display">Choose Date</span>
+              </button>
+              <!-- Hidden native date input triggered by the button -->
+              <input type="date" id="expense-date" class="hidden-date-input" />
+            </div>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" id="add-expense-btn" class="btn btn-primary">
+            <i class="fa-solid fa-plus"></i> Add Expense
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <!-- Recently Added Expenses (Display-only) -->
+    <section class="recent-expenses-section card">
+      <div class="section-header">
+        <h3><i class="fa-solid fa-clock-rotate-left text-primary"></i> Recently Added</h3>
+        <span class="badge badge-accent">Latest first</span>
+      </div>
+      <div id="recent-expenses-list" class="expense-list">
+        <!-- Rendered dynamically -->
+      </div>
+    </section>
+  </main>
+
+  <!-- ==================== VIEW 2: VIEW BY CATEGORY PAGE ==================== -->
+  <main id="category-page" class="page-view">
+    <header class="app-header">
+      <div class="header-left">
+        <button id="nav-to-home-btn" class="btn btn-outline">
+          <i class="fa-solid fa-arrow-left"></i> Back to Home
+        </button>
+      </div>
+      <div class="header-right">
+        <h2>Category & Date Explorer</h2>
+      </div>
+    </header>
+
+    <!-- Search & Filter Card -->
+    <section class="filter-section card">
+      <div class="filter-controls-grid">
+        <!-- Search Bar -->
+        <div class="search-box">
+          <i class="fa-solid fa-magnifying-glass search-icon"></i>
+          <input type="text" id="expense-search" placeholder="Search expense by title..." />
+        </div>
+
+        <!-- Category Dropdown -->
+        <div class="filter-dropdown">
+          <select id="category-filter">
+            <option value="ALL">All Categories</option>
+            <option value="Food & Dining">Food & Dining</option>
+            <option value="Transportation">Transportation</option>
+            <option value="Entertainment">Entertainment</option>
+            <option value="Utilities">Utilities</option>
+            <option value="Others">Others</option>
+          </select>
+        </div>
+      </div>
+      <p class="filter-note"><i class="fa-solid fa-arrow-down-wide-short"></i> Sorted chronologically by expense date</p>
+    </section>
+
+    <!-- Categorized Table -->
+    <section class="category-expenses-section card">
+      <div class="table-container">
+        <table class="expense-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Title</th>
+              <th>Category</th>
+              <th>Amount (₹)</th>
+              <th class="actions-col">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="category-expense-tbody">
+            <!-- Dynamic rows -->
+          </tbody>
+        </table>
+      </div>
+      <div id="no-category-data" class="empty-state hidden">
+        <i class="fa-solid fa-box-open empty-icon"></i>
+        <p>No matching expenses found.</p>
+      </div>
+    </section>
+
+    <!-- In-Page Edit Modal -->
+    <section id="edit-modal" class="modal-overlay hidden">
+      <div class="modal-content card">
+        <div class="modal-header">
+          <h3><i class="fa-solid fa-pen-to-square"></i> Edit Expense</h3>
+          <button type="button" id="close-modal-btn" class="close-btn">&times;</button>
+        </div>
+        <form id="edit-expense-form" novalidate>
+          <input type="hidden" id="edit-expense-id" />
+          
+          <div class="form-group">
+            <label for="edit-expense-title">Title</label>
+            <input type="text" id="edit-expense-title" />
+          </div>
+          
+          <div class="form-group">
+            <label for="edit-expense-amount">Amount (₹)</label>
+            <input type="number" id="edit-expense-amount" class="no-spinner" step="0.01" min="0" />
+          </div>
+          
+          <div class="form-group">
+            <label for="edit-expense-category">Category</label>
+            <select id="edit-expense-category">
+              <option value="Food & Dining">Food & Dining</option>
+              <option value="Transportation">Transportation</option>
+              <option value="Entertainment">Entertainment</option>
+              <option value="Utilities">Utilities</option>
+              <option value="Others">Others</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Expense Date</label>
+            <div class="date-button-wrapper">
+              <button type="button" id="edit-date-btn" class="btn btn-date">
+                <i class="fa-regular fa-calendar"></i>
+                <span id="edit-date-display">Choose Date</span>
+              </button>
+              <input type="date" id="edit-expense-date" class="hidden-date-input" />
+            </div>
+          </div>
+
+          <div class="modal-actions">
+            <button type="button" id="cancel-edit-btn" class="btn btn-secondary">Cancel</button>
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- Delete Confirmation Modal -->
+    <section id="delete-modal" class="modal-overlay hidden">
+      <div class="modal-content card delete-dialog">
+        <div class="delete-icon-wrapper">
+          <i class="fa-solid fa-triangle-exclamation"></i>
+        </div>
+        <h3>Confirm Deletion</h3>
+        <p>Are you sure you want to delete <strong id="delete-item-name"></strong>? This action cannot be undone.</p>
+        <div class="modal-actions">
+          <button type="button" id="cancel-delete-btn" class="btn btn-secondary">Cancel</button>
+          <button type="button" id="confirm-delete-btn" class="btn btn-danger">Delete</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="js/api.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
