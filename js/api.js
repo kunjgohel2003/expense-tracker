@@ -6,7 +6,7 @@
  */
 const ExpenseAPI = (() => {
   // Base URL for the JSON REST API (Update if using MockAPI or a remote URL)
-  const API_BASE_URL = 'http://localhost:3001/expenses';
+  const API_BASE_URL = 'http://localhost:3060/expenses';
 
   return {
     /**
